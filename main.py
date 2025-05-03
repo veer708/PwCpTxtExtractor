@@ -60,16 +60,12 @@ async def start(bot, message):
         [InlineKeyboardButton("📒 Appx Without Purchase 📒", callback_data="appxwp")]
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
-    welcome_text = (
-        "**✨ Welcome to the Free Learning Bot ✨**
-"
-        "🔥 Access premium content without purchase
-"
-        "🔧 Powered by @ytbr_67 — Give credit 🙏
+    welcome_text = """✨ Welcome to the Free Learning Bot ✨
 
-"
-        "👇 Tap any button below to continue 👇"
-    )
+🔥 Access premium content without purchase
+🔧 Powered by @ytbr_67 — Give credit 🙏
+
+👇 Tap any button below to continue 👇"""
     await message.reply_photo(
         photo=random_image_url,
         caption=welcome_text,
