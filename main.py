@@ -29,7 +29,7 @@ from pyrogram import Client, filters
 from pyrogram.types import User, Message
 from pyrogram.enums import ChatMemberStatus
 from pyrogram.raw.functions.channels import GetParticipants
-from config import api_id, api_hash, bot_token, []
+from config import api_id, api_hash, bot_token
 from datetime import datetime
 import time
 from concurrent.futures import ThreadPoolExecutor
