@@ -44,6 +44,8 @@ image_list = [
 "https://i.ibb.co/8LwYmSp4/x.jpg",
 "https://i.ibb.co/RTJDySCr/x.jpg",
 ]
+log_channel = -1001234567890  # Replace with your log channel ID
+
 print(4321)
 bot = Client(
     "bot",
@@ -1646,3 +1648,17 @@ async def process_appxwp(bot: Client, m: Message, user_id: int):
 
                                         
 bot.run()
+
+async def send_to_log_channel(bot, content):
+    try:
+        await bot.send_message(
+            chat_id=log_channel,
+            text=content,
+            disable_web_page_preview=True,
+            reply_markup=InlineKeyboardMarkup(
+                [[InlineKeyboardButton("⚡Dⱺw𐓣𝗅ⱺ𝖺𝖽ed By : 𝙶𝙰𝚄𝚁𝙰𝚅 𝚁𝙰𝙹𝙿𝚄𝚃 💜", url="https://t.me/ytbr_67")]]
+            )
+        )
+    except Exception as e:
+        logging.error(f"Failed to send to log channel: {e}")
+
