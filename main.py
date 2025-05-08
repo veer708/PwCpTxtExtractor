@@ -18,6 +18,8 @@ import uuid
 import random
 import string
 import hashlib
+from flask import Flask
+import threading
 from pyrogram.types.messages_and_media import message
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from pyrogram.errors import FloodWait
@@ -29,7 +31,7 @@ from pyrogram import Client, filters
 from pyrogram.types import User, Message
 from pyrogram.enums import ChatMemberStatus
 from pyrogram.raw.functions.channels import GetParticipants
-from config import api_id, api_hash, bot_token
+from config import api_id, api_hash, bot_token, auth_users
 from datetime import datetime
 import time
 from concurrent.futures import ThreadPoolExecutor
@@ -37,43 +39,60 @@ THREADPOOL = ThreadPoolExecutor(max_workers=1000)
 import logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-image_list = [
-"https://i.ibb.co/svKMb4QP/x.jpg",
-"https://i.ibb.co/DH9h1W7N/x.jpg",
-"https://i.ibb.co/Pv7dV7GP/x.jpg",
-"https://i.ibb.co/8LwYmSp4/x.jpg",
-"https://i.ibb.co/RTJDySCr/x.jpg",
-]
-log_channel = -1001234567890  # Replace with your log channel ID
 
+# Bot credentials from environment variables (Render compatible)
+API_ID = int(os.environ.get("API_ID", 24473318))
+API_HASH = os.environ.get("API_HASH", "e7dd0576c5ac0ff8f90971d6bb04c8f5")
+BOT_TOKEN = os.environ.get("BOT_TOKEN", "")
+
+# Initialize Bot Globally (IMPORTANT FIX)
+bot = Client("bot", api_id=API_ID, api_hash=API_HASH, bot_token=BOT_TOKEN)
+
+# Flask app for Render
+app = Flask(__name__)
+
+@app.route('/')
+def home():
+    return "Bot is running!"
+
+def run_flask():
+    app.run(host="0.0.0.0", port=1000) #Use 8080 Port here, if you're deploying it on koyeb
+    
+
+image_list = [
+"https://graph.org/file/8b1f4146a8d6b43e5b2bc-be490579da043504d5.jpg",
+"https://graph.org/file/b75dab2b3f7eaff612391-282aa53538fd3198d4.jpg",
+"https://graph.org/file/38de0b45dd9144e524a33-0205892dd05593774b.jpg",
+"https://graph.org/file/be39f0eebb9b66d7d6bc9-59af2f46a4a8c510b7.jpg",
+"https://graph.org/file/8b7e3d10e362a2850ba0a-f7c7c46e9f4f50b10b.jpg",
+]
 print(4321)
-bot = Client(
-    "bot",
-    api_id=017dc661ca1432ac2fe5ecb62499d88f,
-    api_hash=23237831,
-    bot_token="7805274671:AAHde-i_R0z0zNZ5_BrylKD9gYnT2iv9Mzo")
+
 
 @bot.on_message(filters.command(["start"]))
 async def start(bot, message):
-    random_image_url = random.choice(image_list)
-    keyboard = [
-        [InlineKeyboardButton("🚀 Physics Wallah without Purchase 🚀", callback_data="pwwp")],
-        [InlineKeyboardButton("📘 Classplus without Purchase 📘", callback_data="cpwp")],
-        [InlineKeyboardButton("📒 Appx Without Purchase 📒", callback_data="appxwp")]
+  random_image_url = random.choice(image_list)
+
+  keyboard = [
+    [
+      InlineKeyboardButton("🚀 Physics Wallah without Purchase 🚀", callback_data="pwwp")
+    ],
+    [
+      InlineKeyboardButton("📘 Classplus without Purchase 📘", callback_data="cpwp")
+    ],
+    [
+      InlineKeyboardButton("📒 Appx Without Purchase 📒", callback_data="appxwp")
     ]
-    reply_markup = InlineKeyboardMarkup(keyboard)
-    welcome_text = """✨ Welcome to the Free Learning Bot ✨
+  ]
 
-🔥 Access premium content without purchase
-🔧 Powered by @ytbr_67 — Give credit 🙏
+  reply_markup = InlineKeyboardMarkup(keyboard)
 
-👇 Tap any button below to continue 👇"""
-    await message.reply_photo(
-        photo=random_image_url,
-        caption=welcome_text,
-        quote=True,
-        reply_markup=reply_markup
-    )
+  await message.reply_photo(
+    photo=random_image_url,
+    caption="**PLEASE👇PRESS👇HERE**",
+    quote=True,
+    reply_markup=reply_markup
+  )
 @bot.on_message(group=2)
 #async def account_login(bot: Client, m: Message):
 #    try:
@@ -340,11 +359,11 @@ async def pwwp_callback(bot, callback_query):
     user_id = callback_query.from_user.id
     await callback_query.answer()
     
-    auth_user = [][0]
+    auth_user = auth_users[0]
     user = await bot.get_users(auth_user)
     owner_username = "@" + user.username
 
-    if user_id not in []:
+    if user_id not in auth_users:
         await bot.send_message(callback_query.message.chat.id, f"**You Are Not Subscribed To This Bot\nContact - {owner_username}**")
         return
             
@@ -773,11 +792,11 @@ async def cpwp_callback(bot, callback_query):
     user_id = callback_query.from_user.id
     await callback_query.answer()
 
-    auth_user = [][0]
+    auth_user = auth_users[0]
     user = await bot.get_users(auth_user)
     owner_username = "@" + user.username
 
-    if user_id not in []:
+    if user_id not in auth_users:
         await bot.send_message(callback_query.message.chat.id, f"**You Are Not Subscribed To This Bot\nContact - {owner_username}**")
         return    
             
@@ -1399,11 +1418,11 @@ async def appxwp_callback(bot, callback_query):
     user_id = callback_query.from_user.id
     await callback_query.answer()
 
-    auth_user = [][0]
+    auth_user = auth_users[0]
     user = await bot.get_users(auth_user)
     owner_username = "@" + user.username
 
-    if user_id not in []:
+    if user_id not in auth_users:
         await bot.send_message(callback_query.message.chat.id, f"**You Are Not Subscribed To This Bot\nContact - {owner_username}**")
         return
         
@@ -1646,18 +1665,8 @@ async def process_appxwp(bot: Client, m: Message, user_id: int):
             await CONNECTOR.close()
 
 
+# Start Flask + Bot
+if __name__ == "__main__":
+    threading.Thread(target=run_flask).start()
+    bot.run()
                                         
-bot.run()
-
-async def send_to_log_channel(bot, content):
-    try:
-        await bot.send_message(
-            chat_id=log_channel,
-            text=content,
-            disable_web_page_preview=True,
-            reply_markup=InlineKeyboardMarkup(
-                [[InlineKeyboardButton("⚡Dⱺw𐓣𝗅ⱺ𝖺𝖽ed By : 𝙶𝙰𝚄𝚁𝙰𝚅 𝚁𝙰𝙹𝙿𝚄𝚃 💜", url="https://t.me/ytbr_67")]]
-            )
-        )
-    except Exception as e:
-        logging.error(f"Failed to send to log channel: {e}")
