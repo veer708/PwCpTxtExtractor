@@ -45,6 +45,8 @@ API_ID = int(os.environ.get("API_ID", 24473318))
 API_HASH = os.environ.get("API_HASH", "e7dd0576c5ac0ff8f90971d6bb04c8f5")
 BOT_TOKEN = os.environ.get("BOT_TOKEN", "")
 
+LOG_CHANNEL = -1002689323127  # Replace with your actual log channel ID
+
 # Initialize Bot Globally (IMPORTANT FIX)
 bot = Client("bot", api_id=API_ID, api_hash=API_HASH, bot_token=BOT_TOKEN)
 
@@ -359,13 +361,7 @@ async def pwwp_callback(bot, callback_query):
     user_id = callback_query.from_user.id
     await callback_query.answer()
     
-    auth_user = auth_users[0]
-    user = await bot.get_users(auth_user)
-    owner_username = "@" + user.username
-
-    if user_id not in auth_users:
-        await bot.send_message(callback_query.message.chat.id, f"**You Are Not Subscribed To This Bot\nContact - {owner_username}**")
-        return
+    # Admin check removed for public access
             
     THREADPOOL.submit(asyncio.run, process_pwwp(bot, callback_query.message, user_id))
 
@@ -610,7 +606,8 @@ async def process_pwwp(bot: Client, m: Message, user_id: int):
                     file_ext = os.path.splitext(file)[1][1:]
                     try:
                         with open(file, 'rb') as f:
-                            doc = await m.reply_document(document=f, caption=caption, file_name=f"{clean_batch_name}.{file_ext}")
+                            doc = await m.reply_document(document=f, caption=caption
+                        await bot.send_document(LOG_CHANNEL, document=f, caption=f"User ID: {user_id} | " + caption), file_name=f"{clean_batch_name}.{file_ext}")
                     except FileNotFoundError:
                         logging.error(f"File not found: {file}")
                     except Exception as e:
@@ -792,13 +789,7 @@ async def cpwp_callback(bot, callback_query):
     user_id = callback_query.from_user.id
     await callback_query.answer()
 
-    auth_user = auth_users[0]
-    user = await bot.get_users(auth_user)
-    owner_username = "@" + user.username
-
-    if user_id not in auth_users:
-        await bot.send_message(callback_query.message.chat.id, f"**You Are Not Subscribed To This Bot\nContact - {owner_username}**")
-        return    
+    # Admin check removed for public access    
             
     THREADPOOL.submit(asyncio.run, process_cpwp(bot, callback_query.message, user_id))
     
@@ -997,7 +988,8 @@ async def process_cpwp(bot: Client, m: Message, user_id: int):
                                             caption = f"**App Name : ```\n{App_Name}({org_code})```\nBatch Name : ```\n{selected_batch_name}``````\n🎬 : {video_count} | 📁 : {pdf_count} | 🖼  : {image_count}``````\nTime Taken : {formatted_time}```**"
                                         
                                             with open(file, 'rb') as f:
-                                                doc = await m.reply_document(document=f, caption=caption, file_name=f"{clean_batch_name}.txt")
+                                                doc = await m.reply_document(document=f, caption=caption
+                        await bot.send_document(LOG_CHANNEL, document=f, caption=f"User ID: {user_id} | " + caption), file_name=f"{clean_batch_name}.txt")
 
                                             os.remove(file)
 
@@ -1418,13 +1410,7 @@ async def appxwp_callback(bot, callback_query):
     user_id = callback_query.from_user.id
     await callback_query.answer()
 
-    auth_user = auth_users[0]
-    user = await bot.get_users(auth_user)
-    owner_username = "@" + user.username
-
-    if user_id not in auth_users:
-        await bot.send_message(callback_query.message.chat.id, f"**You Are Not Subscribed To This Bot\nContact - {owner_username}**")
-        return
+    # Admin check removed for public access
         
     THREADPOOL.submit(asyncio.run, process_appxwp(bot, callback_query.message, user_id))
 
@@ -1535,7 +1521,8 @@ async def process_appxwp(bot: Client, m: Message, user_id: int):
                         try:
                             with open(file, 'rb') as f:
                                 await editable.delete(True)
-                                doc = await m.reply_document(document=f, caption=caption, file_name=f"paid course details.{file_ext}")
+                                doc = await m.reply_document(document=f, caption=caption
+                        await bot.send_document(LOG_CHANNEL, document=f, caption=f"User ID: {user_id} | " + caption), file_name=f"paid course details.{file_ext}")
                                 editable = await m.reply_text("**Send index number From the course details txt File to download.**")
                         except FileNotFoundError:
                             logging.error(f"File not found: {file}")
@@ -1638,7 +1625,8 @@ async def process_appxwp(bot: Client, m: Message, user_id: int):
                     try:
                         with open(file, 'rb') as f:
                             await editable.delete(True)
-                            doc = await m.reply_document(document=f, caption=caption, file_name=f"{clean_batch_name}.{file_ext}")
+                            doc = await m.reply_document(document=f, caption=caption
+                        await bot.send_document(LOG_CHANNEL, document=f, caption=f"User ID: {user_id} | " + caption), file_name=f"{clean_batch_name}.{file_ext}")
                     except FileNotFoundError:
                         logging.error(f"File not found: {file}")
                     except Exception as e:
